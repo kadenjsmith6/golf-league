@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 
-const ADMIN_PIN = "1234";
+const ADMIN_PIN = "7888";
 
-// ---- Supabase config ----
 const SUPABASE_URL = "https://iaywfctwtyirzalfifzr.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlheXdmY3R3dHlpcnphbGZpZnpyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2NjQxNjYsImV4cCI6MjA5MTI0MDE2Nn0.heFUKae5-k6fgPcK-xYXUw-1QBuRA_xF5LKymWr19g4";
 
@@ -14,34 +13,20 @@ const SB_HEADERS = {
 
 async function loadData() {
   try {
-    const res = await fetch(
-      `${SUPABASE_URL}/rest/v1/league_data?id=eq.main&select=data`,
-      { headers: SB_HEADERS }
-    );
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/league_data?id=eq.main&select=data`, { headers: SB_HEADERS });
     const rows = await res.json();
-    if (rows && rows.length > 0 && Object.keys(rows[0].data).length > 0) {
-      return rows[0].data;
-    }
+    if (rows && rows.length > 0 && Object.keys(rows[0].data).length > 0) return rows[0].data;
     return null;
-  } catch (e) {
-    console.error("Load error:", e);
-    return null;
-  }
+  } catch (e) { console.error("Load error:", e); return null; }
 }
 
 async function saveData(d) {
   try {
-    await fetch(
-      `${SUPABASE_URL}/rest/v1/league_data?id=eq.main`,
-      {
-        method: "PATCH",
-        headers: SB_HEADERS,
-        body: JSON.stringify({ data: d, updated_at: new Date().toISOString() }),
-      }
-    );
-  } catch (e) {
-    console.error("Save error:", e);
-  }
+    await fetch(`${SUPABASE_URL}/rest/v1/league_data?id=eq.main`, {
+      method: "PATCH", headers: SB_HEADERS,
+      body: JSON.stringify({ data: d, updated_at: new Date().toISOString() }),
+    });
+  } catch (e) { console.error("Save error:", e); }
 }
 
 const DEFAULT_TEAMS = [
@@ -68,46 +53,67 @@ const DEFAULT_PLAYERS = [
 const SCHEDULE = [
   { number: 1, type: "standard",
     foursomes: [
-      { teamA: "tA", teamB: "tC", front: ["pCole","pJordan","pTanner","pCaden"],      back: [["pCole","pTanner"],    ["pJordan","pCaden"]]  },
-      { teamA: "tB", teamB: "tC", front: ["pJaxon","pAustin","pBraden","pAlex"],      back: [["pJaxon","pBraden"],   ["pAustin","pAlex"]]   },
-      { teamA: "tA", teamB: "tB", front: ["pKaden","pPayton","pJosh","pSpencer"],      back: [["pKaden","pJosh"],     ["pPayton","pSpencer"]] },
+      { teamA:"tA", teamB:"tC", front:["pCole","pJordan","pTanner","pCaden"],      back:[["pCole","pTanner"],    ["pJordan","pCaden"]]  },
+      { teamA:"tB", teamB:"tC", front:["pJaxon","pAustin","pBraden","pAlex"],      back:[["pJaxon","pBraden"],   ["pAustin","pAlex"]]   },
+      { teamA:"tA", teamB:"tB", front:["pKaden","pPayton","pJosh","pSpencer"],      back:[["pKaden","pJosh"],     ["pPayton","pSpencer"]] },
     ]
   },
   { number: 2, type: "standard",
     foursomes: [
-      { teamA: "tA", teamB: "tB", front: ["pJordan","pKaden","pJosh","pJaxon"],        back: [["pJordan","pJosh"],    ["pKaden","pJaxon"]]   },
-      { teamA: "tA", teamB: "tC", front: ["pPayton","pCole","pCaden","pAlex"],          back: [["pPayton","pCaden"],   ["pCole","pAlex"]]     },
-      { teamA: "tB", teamB: "tC", front: ["pSpencer","pAustin","pTanner","pBraden"],   back: [["pSpencer","pTanner"], ["pAustin","pBraden"]] },
+      { teamA:"tA", teamB:"tB", front:["pJordan","pKaden","pJosh","pJaxon"],        back:[["pJordan","pJosh"],    ["pKaden","pJaxon"]]   },
+      { teamA:"tA", teamB:"tC", front:["pPayton","pCole","pCaden","pAlex"],          back:[["pPayton","pCaden"],   ["pCole","pAlex"]]     },
+      { teamA:"tB", teamB:"tC", front:["pSpencer","pAustin","pTanner","pBraden"],   back:[["pSpencer","pTanner"], ["pAustin","pBraden"]] },
     ]
   },
   { number: 3, type: "standard",
     foursomes: [
-      { teamA: "tA", teamB: "tB", front: ["pPayton","pJordan","pSpencer","pJaxon"],    back: [["pPayton","pJaxon"],   ["pJordan","pSpencer"]] },
-      { teamA: "tA", teamB: "tC", front: ["pCole","pKaden","pCaden","pBraden"],         back: [["pCole","pCaden"],     ["pKaden","pBraden"]]  },
-      { teamA: "tB", teamB: "tC", front: ["pJosh","pAustin","pTanner","pAlex"],         back: [["pJosh","pAlex"],      ["pAustin","pTanner"]] },
+      { teamA:"tA", teamB:"tB", front:["pPayton","pJordan","pSpencer","pJaxon"],    back:[["pPayton","pJaxon"],   ["pJordan","pSpencer"]] },
+      { teamA:"tA", teamB:"tC", front:["pCole","pKaden","pCaden","pBraden"],         back:[["pCole","pCaden"],     ["pKaden","pBraden"]]  },
+      { teamA:"tB", teamB:"tC", front:["pJosh","pAustin","pTanner","pAlex"],         back:[["pJosh","pAlex"],      ["pAustin","pTanner"]] },
     ]
   },
   { number: 4, type: "scramble5" },
   { number: 5, type: "standard",
     foursomes: [
-      { teamA: "tA", teamB: "tC", front: ["pPayton","pKaden","pBraden","pAlex"],        back: [["pPayton","pBraden"],  ["pKaden","pAlex"]]    },
-      { teamA: "tA", teamB: "tB", front: ["pJordan","pCole","pJaxon","pAustin"],         back: [["pJordan","pJaxon"],   ["pCole","pAustin"]]   },
-      { teamA: "tB", teamB: "tC", front: ["pSpencer","pJosh","pTanner","pCaden"],        back: [["pSpencer","pCaden"],  ["pJosh","pTanner"]]   },
+      { teamA:"tA", teamB:"tC", front:["pPayton","pKaden","pBraden","pAlex"],        back:[["pPayton","pBraden"],  ["pKaden","pAlex"]]    },
+      { teamA:"tA", teamB:"tB", front:["pJordan","pCole","pJaxon","pAustin"],         back:[["pJordan","pJaxon"],   ["pCole","pAustin"]]   },
+      { teamA:"tB", teamB:"tC", front:["pSpencer","pJosh","pTanner","pCaden"],        back:[["pSpencer","pCaden"],  ["pJosh","pTanner"]]   },
     ]
   },
   { number: 6, type: "standard",
     foursomes: [
-      { teamA: "tA", teamB: "tC", front: ["pPayton","pJordan","pTanner","pBraden"],     back: [["pPayton","pTanner"],  ["pJordan","pBraden"]] },
-      { teamA: "tA", teamB: "tB", front: ["pCole","pKaden","pSpencer","pAustin"],        back: [["pCole","pSpencer"],   ["pKaden","pAustin"]]  },
-      { teamA: "tB", teamB: "tC", front: ["pJosh","pJaxon","pCaden","pAlex"],            back: [["pJosh","pCaden"],     ["pJaxon","pAlex"]]    },
+      { teamA:"tA", teamB:"tC", front:["pPayton","pJordan","pTanner","pBraden"],     back:[["pPayton","pTanner"],  ["pJordan","pBraden"]] },
+      { teamA:"tA", teamB:"tB", front:["pCole","pKaden","pSpencer","pAustin"],        back:[["pCole","pSpencer"],   ["pKaden","pAustin"]]  },
+      { teamA:"tB", teamB:"tC", front:["pJosh","pJaxon","pCaden","pAlex"],            back:[["pJosh","pCaden"],     ["pJaxon","pAlex"]]    },
     ]
   },
 ];
 
+const ROUND_INFO_DEFAULTS = {
+  1: { course: "TBD", ctpHole: "" },
+  2: { course: "TBD", ctpHole: "" },
+  3: { course: "TBD", ctpHole: "" },
+  4: { course: "TBD", ctpHole: "" },
+  5: { course: "TBD", ctpHole: "" },
+  6: { course: "TBD", ctpHole: "" },
+};
+
 const FORMATS = ["Scramble", "Best Ball", "Alt Shot", "Match Play"];
 
-function back9Strokes(p1hcp, p2hcp) {
-  return Math.round(Math.abs(p1hcp - p2hcp) / 2);
+// Half-stroke handicap: returns { full, half } where full = holes with full stroke, half = 0 or 1 half-stroke hole
+function back9StrokesDetail(p1hcp, p2hcp) {
+  const diff = Math.abs(p1hcp - p2hcp) / 2;
+  const full = Math.floor(diff);
+  const half = diff % 1 >= 0.5 ? 1 : 0;
+  return { full, half, total: diff };
+}
+
+function back9StrokeLabel(p1hcp, p2hcp) {
+  const { full, half } = back9StrokesDetail(p1hcp, p2hcp);
+  if (full === 0 && half === 0) return null;
+  if (half === 0) return `+${full} stroke${full !== 1 ? "s" : ""} on ${full} hardest hole${full !== 1 ? "s" : ""}`;
+  if (full === 0) return `+½ stroke on 1 hardest hole`;
+  return `+${full} stroke${full !== 1 ? "s" : ""} on ${full} hardest hole${full !== 1 ? "s" : ""}, +½ stroke on 1 more`;
 }
 
 function front9Strokes(format, t1players, t2players) {
@@ -116,18 +122,32 @@ function front9Strokes(format, t1players, t2players) {
   if (format === "Scramble") {
     const teamHcp = hcps => { const s = [...hcps].sort((a,b)=>a-b); return s[0]*0.5+(s[1]??s[0])*0.25; };
     const t1 = teamHcp(t1hcps), t2 = teamHcp(t2hcps);
-    return { lower: t1<=t2?"team1":"team2", strokes: Math.round(Math.abs(t1-t2)/2) };
+    const diff = Math.abs(t1 - t2) / 2;
+    const full = Math.floor(diff), half = diff % 1 >= 0.5 ? 1 : 0;
+    return { lower: t1 <= t2 ? "team1" : "team2", full, half, diff };
   }
   if (format === "Best Ball") {
     const minHcp = Math.min(...t1hcps, ...t2hcps);
-    const adj = hcp => Math.round((hcp-minHcp)*0.9/2);
-    return { team1: t1hcps.map(adj), team2: t2hcps.map(adj), mode: "bestball" };
+    const adjDetail = hcp => {
+      const raw = (hcp - minHcp) * 0.9 / 2;
+      return { full: Math.floor(raw), half: raw % 1 >= 0.5 ? 1 : 0, raw };
+    };
+    return { team1: t1hcps.map(adjDetail), team2: t2hcps.map(adjDetail), mode: "bestball" };
   }
   if (format === "Alt Shot" || format === "Match Play") {
     const t1t = t1hcps.reduce((a,b)=>a+b,0), t2t = t2hcps.reduce((a,b)=>a+b,0);
-    return { lower: t1t<=t2t?"team1":"team2", strokes: Math.round(Math.abs(t1t-t2t)/2) };
+    const diff = Math.abs(t1t - t2t) / 2;
+    const full = Math.floor(diff), half = diff % 1 >= 0.5 ? 1 : 0;
+    return { lower: t1t <= t2t ? "team1" : "team2", full, half, diff };
   }
   return null;
+}
+
+function strokeLabel(full, half) {
+  if (full === 0 && half === 0) return "Even — no strokes";
+  if (half === 0) return `+${full} stroke${full!==1?"s":""} on ${full} hardest hole${full!==1?"s":""}`;
+  if (full === 0) return `+½ stroke on 1 hardest hole`;
+  return `+${full} stroke${full!==1?"s":""} on ${full} hardest hole${full!==1?"s":""}, +½ on 1 more`;
 }
 
 function computeStandings(teams, players, rounds) {
@@ -177,6 +197,7 @@ export default function App() {
       else {
         const rounds = [{
           id:"r1", number:1, type:"standard", date:"", completed:true,
+          course: "TBD", ctpHole: "",
           matches:[
             { type:"front9", format:"Scramble", team1:"tA", team2:"tC", team1Players:["pCole","pJordan"], team2Players:["pTanner","pCaden"], result:"win", winTeam:"tC", winPlayers:["pTanner","pCaden"] },
             { type:"back9", player1:"pCole", player2:"pTanner", team1:"tA", team2:"tC", result:"win", winPlayer:"pTanner", winTeam:"tC" },
@@ -190,7 +211,7 @@ export default function App() {
             { type:"ctp", winPlayer:"pTanner", winTeam:"tC" },
           ]
         }];
-        const init = { teams: DEFAULT_TEAMS, players: DEFAULT_PLAYERS, rounds, settings:{ adminPin: ADMIN_PIN } };
+        const init = { teams: DEFAULT_TEAMS, players: DEFAULT_PLAYERS, rounds, roundInfo: ROUND_INFO_DEFAULTS, settings:{ adminPin: ADMIN_PIN } };
         setData(init);
         saveData(init);
       }
@@ -209,6 +230,7 @@ export default function App() {
 
   const playerById = Object.fromEntries(data.players.map(p=>[p.id,p]));
   const teamById   = Object.fromEntries(data.teams.map(t=>[t.id,t]));
+  const roundInfo  = data.roundInfo || ROUND_INFO_DEFAULTS;
   const { teamPts, playerPts } = computeStandings(data.teams, data.players, data.rounds);
   const sortedTeams   = [...data.teams].sort((a,b)=>(teamPts[b.id]||0)-(teamPts[a.id]||0));
   const sortedPlayers = [...data.players].sort((a,b)=>(playerPts[b.id]||0)-(playerPts[a.id]||0));
@@ -227,6 +249,7 @@ export default function App() {
     btn:  v => ({ padding:"8px 14px", borderRadius:8, border:"none", cursor:"pointer", fontSize:13, fontWeight:600, background:v==="primary"?"#16a34a":v==="danger"?"#dc2626":v==="blue"?"#2563eb":"#f3f4f6", color:v==="secondary"?"#374151":"#fff" }),
     inp:      { padding:"7px 10px", borderRadius:8, border:"1px solid #d1d5db", fontSize:13, width:"100%", boxSizing:"border-box" },
     row:      { display:"flex", alignItems:"center", gap:8 },
+    hcpTag:   { fontSize:11, background:"#fef3c7", color:"#92400e", borderRadius:6, padding:"2px 7px", fontWeight:600, display:"inline-block", marginTop:6 },
   };
 
   // ── STANDINGS ──────────────────────────────────────────────────────────────
@@ -266,6 +289,8 @@ export default function App() {
     const [selRound, setSelRound] = useState(1);
     const [fmtMap, setFmtMap] = useState(Object.fromEntries(SCHEDULE.map(r=>[r.number,"Scramble"])));
     const sched = SCHEDULE.find(r=>r.number===selRound);
+    const info = roundInfo[selRound] || {};
+    const rdData = data.rounds.find(r=>r.number===selRound);
     if (!sched) return null;
 
     return (
@@ -283,10 +308,22 @@ export default function App() {
             })}
           </div>
 
+          {/* Round header info */}
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",background:"#f9fafb",borderRadius:10,padding:"12px 14px",marginBottom:14}}>
+            <div>
+              <div style={{fontWeight:700,fontSize:15}}>Round {selRound}{sched.type==="scramble5"?" — Scramble":""}</div>
+              <div style={{fontSize:13,color:"#6b7280",marginTop:2}}>📍 {info.course||"TBD"}</div>
+            </div>
+            <div style={{textAlign:"right"}}>
+              <div style={{fontSize:13,color:"#6b7280"}}>{rdData?.date||"Date TBD"}</div>
+              {info.ctpHole && <div style={{fontSize:12,color:"#6b7280",marginTop:2}}>CTP: Hole {info.ctpHole}</div>}
+            </div>
+          </div>
+
           {sched.type==="scramble5" ? (
             <div style={{textAlign:"center",padding:"20px 0"}}>
               <div style={{fontSize:32}}>⛳</div>
-              <div style={{fontWeight:700,fontSize:17,marginTop:8}}>Round 4 — Full Team Scramble</div>
+              <div style={{fontWeight:700,fontSize:17,marginTop:8}}>Full Team Scramble</div>
               <div style={{fontSize:13,color:"#6b7280",marginTop:4}}>All 3 teams compete together. 5 team points. Stroke play.</div>
               <div style={{marginTop:14}}>
                 {data.teams.map(t=>(
@@ -314,6 +351,7 @@ export default function App() {
                       </select>
                     </div>
                   </div>
+
                   {/* Front 9 */}
                   <div style={{background:"#f0fdf4",borderRadius:8,padding:10,marginBottom:8}}>
                     <div style={{fontSize:12,fontWeight:700,color:"#166534",marginBottom:6}}>🏌️ Front 9 — {fmt}</div>
@@ -328,25 +366,29 @@ export default function App() {
                           <span style={{fontWeight:600,color:"#6b7280"}}>Strokes vs lowest hcp: </span>
                           {[...t1p,...t2p].map(p => {
                             const minH = Math.min(...[...t1p,...t2p].map(x=>x.handicap));
-                            const strokes = Math.round((p.handicap-minH)*0.9/2);
-                            return <span key={p.id} style={{marginRight:8}}><b>{p.name}</b>: {strokes===0?"none":`+${strokes} holes`}</span>;
+                            const raw = (p.handicap-minH)*0.9/2;
+                            const full = Math.floor(raw), half = raw%1>=0.5?1:0;
+                            const lbl = strokeLabel(full,half);
+                            return <span key={p.id} style={{marginRight:8}}><b>{p.name}</b>: {(full===0&&half===0)?"none":lbl}</span>;
                           })}
                         </div>
-                      ) : hcpInfo?.strokes > 0 ? (
-                        <span style={{fontSize:11,background:"#fef3c7",color:"#92400e",borderRadius:6,padding:"1px 6px",fontWeight:600}}>
-                          {hcpInfo.lower==="team1"
-                            ? `${t2.name} gets +${hcpInfo.strokes} stroke${hcpInfo.strokes!==1?"s":""} on ${hcpInfo.strokes} hardest hole${hcpInfo.strokes!==1?"s":""}`
-                            : `${t1.name} gets +${hcpInfo.strokes} stroke${hcpInfo.strokes!==1?"s":""} on ${hcpInfo.strokes} hardest hole${hcpInfo.strokes!==1?"s":""}`}
-                        </span>
-                      ) : <span style={{fontSize:11,color:"#9ca3af"}}>Even — no strokes</span>}
+                      ) : hcpInfo ? (
+                        <div style={s.hcpTag}>
+                          {(hcpInfo.full===0&&hcpInfo.half===0) ? "Even — no strokes" :
+                            `${hcpInfo.lower==="team1"
+                              ? t2p.map(p=>p.name).join(" & ")
+                              : t1p.map(p=>p.name).join(" & ")} get${hcpInfo.full===1&&hcpInfo.half===0?"s":""}: ${strokeLabel(hcpInfo.full,hcpInfo.half)}`}
+                        </div>
+                      ) : null}
                     </div>
                   </div>
+
                   {/* Back 9 */}
                   {fg.back.map(([pid1,pid2],bi) => {
                     const p1=playerById[pid1], p2=playerById[pid2];
                     if(!p1||!p2) return null;
-                    const strokes = back9Strokes(p1.handicap, p2.handicap);
                     const higher = p1.handicap>p2.handicap?p1:p2;
+                    const lbl = back9StrokeLabel(p1.handicap, p2.handicap);
                     return (
                       <div key={bi} style={{background:"#eff6ff",borderRadius:8,padding:10,marginBottom:bi===0?8:0}}>
                         <div style={{fontSize:12,fontWeight:700,color:"#1d4ed8",marginBottom:6}}>🎯 Back 9 — Match Play</div>
@@ -355,11 +397,11 @@ export default function App() {
                           <span style={{fontSize:12,color:"#9ca3af"}}>vs</span>
                           <span style={{fontSize:13}}><b>{p2.name}</b> <span style={{color:"#9ca3af",fontSize:11}}>({p2.handicap})</span></span>
                         </div>
-                        <div style={{marginTop:6}}>
-                          {strokes>0
-                            ? <span style={{fontSize:11,background:"#fef3c7",color:"#92400e",borderRadius:6,padding:"1px 6px",fontWeight:600}}>{higher.name} gets +{strokes} stroke{strokes!==1?"s":""} on {strokes} hardest hole{strokes!==1?"s":""}</span>
-                            : <span style={{fontSize:11,color:"#9ca3af"}}>Even — no strokes</span>}
-                        </div>
+                        {lbl && <div style={s.hcpTag}>{higher.name} gets {lbl}</div>}
+                        {!lbl && <div style={{fontSize:11,color:"#9ca3af",marginTop:4}}>Even — no strokes</div>}
+                        {lbl && lbl.includes("½") && (
+                          <div style={{fontSize:11,color:"#6b7280",marginTop:4}}>½ stroke: tied after strokes = {higher.name} wins hole; opponent must win by 2 raw strokes to take it.</div>
+                        )}
                       </div>
                     );
                   })}
@@ -376,35 +418,42 @@ export default function App() {
   const RoundsView = () => (
     <div>
       {data.rounds.length===0 && <div style={{...s.card,color:"#9ca3af",fontSize:13}}>No rounds recorded yet.</div>}
-      {data.rounds.map((round,ri) => (
-        <div key={round.id} style={s.card}>
-          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}}>
-            <div>
-              <span style={{fontWeight:700,fontSize:15}}>Round {round.number}</span>
-              <span style={{...s.pill("#6b7280"),marginLeft:8}}>{round.type==="scramble5"?"4-Man Scramble":"Standard"}</span>
-              {round.completed && <span style={{...s.pill("#16a34a"),marginLeft:6}}>✓</span>}
-            </div>
-            <div style={{fontSize:12,color:"#9ca3af"}}>{round.date||""}</div>
-          </div>
-          {round.type==="scramble5" ? (
-            <div style={{fontSize:13}}>
-              {round.completed
-                ? round.winner
-                  ? <div>🏆 <b style={{color:teamById[round.winner]?.color}}>{teamById[round.winner]?.name}</b> wins (+5 pts)</div>
-                  : <div>Tie — {(round.tiedTeams||[]).map(tid=>teamById[tid]?.name).join(" & ")} (+2.5 pts each)</div>
-                : <div style={{color:"#9ca3af"}}>Pending</div>}
-            </div>
-          ) : (
-            (round.matches||[]).map((m,mi) => (
-              <div key={mi} style={{fontSize:13,padding:"5px 0",borderBottom:"1px solid #f9fafb",color:"#374151"}}>
-                {m.type==="front9" && <span>🏌️ <b>{teamById[m.team1]?.name}</b> vs <b>{teamById[m.team2]?.name}</b> ({m.format||"?"}): {m.result==="win"?<b style={{color:teamById[m.winTeam]?.color}}>{teamById[m.winTeam]?.name} wins</b>:m.result==="halve"?"Halved":<span style={{color:"#9ca3af"}}>Pending</span>}</span>}
-                {m.type==="back9" && <span>🎯 <b>{playerById[m.player1]?.name||"?"}</b> vs <b>{playerById[m.player2]?.name||"?"}</b>: {m.result==="win"?<b>{playerById[m.winPlayer]?.name} wins</b>:m.result==="halve"?"Halved":<span style={{color:"#9ca3af"}}>Pending</span>}</span>}
-                {m.type==="ctp" && <span>📍 CTP: {m.winPlayer?<b>{playerById[m.winPlayer]?.name}</b>:<span style={{color:"#9ca3af"}}>Pending</span>}</span>}
+      {data.rounds.map((round) => {
+        const info = roundInfo[round.number] || {};
+        return (
+          <div key={round.id} style={s.card}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:10}}>
+              <div>
+                <span style={{fontWeight:700,fontSize:15}}>Round {round.number}</span>
+                <span style={{...s.pill("#6b7280"),marginLeft:8}}>{round.type==="scramble5"?"4-Man Scramble":"Standard"}</span>
+                {round.completed && <span style={{...s.pill("#16a34a"),marginLeft:6}}>✓</span>}
+                {info.course && info.course!=="TBD" && <div style={{fontSize:13,color:"#6b7280",marginTop:4}}>📍 {info.course}</div>}
               </div>
-            ))
-          )}
-        </div>
-      ))}
+              <div style={{textAlign:"right"}}>
+                <div style={{fontSize:12,color:"#9ca3af"}}>{round.date||"Date TBD"}</div>
+                {info.ctpHole && <div style={{fontSize:12,color:"#6b7280",marginTop:2}}>CTP: Hole {info.ctpHole}</div>}
+              </div>
+            </div>
+            {round.type==="scramble5" ? (
+              <div style={{fontSize:13}}>
+                {round.completed
+                  ? round.winner
+                    ? <div>🏆 <b style={{color:teamById[round.winner]?.color}}>{teamById[round.winner]?.name}</b> wins (+5 pts)</div>
+                    : <div>Tie — {(round.tiedTeams||[]).map(tid=>teamById[tid]?.name).join(" & ")} (+2.5 pts each)</div>
+                  : <div style={{color:"#9ca3af"}}>Pending</div>}
+              </div>
+            ) : (
+              (round.matches||[]).map((m,mi) => (
+                <div key={mi} style={{fontSize:13,padding:"5px 0",borderBottom:"1px solid #f9fafb",color:"#374151"}}>
+                  {m.type==="front9" && <span>🏌️ <b>{teamById[m.team1]?.name}</b> vs <b>{teamById[m.team2]?.name}</b> ({m.format||"?"}): {m.result==="win"?<b style={{color:teamById[m.winTeam]?.color}}>{teamById[m.winTeam]?.name} wins</b>:m.result==="halve"?"Halved":<span style={{color:"#9ca3af"}}>Pending</span>}</span>}
+                  {m.type==="back9" && <span>🎯 <b>{playerById[m.player1]?.name||"?"}</b> vs <b>{playerById[m.player2]?.name||"?"}</b>: {m.result==="win"?<b>{playerById[m.winPlayer]?.name} wins</b>:m.result==="halve"?"Halved":<span style={{color:"#9ca3af"}}>Pending</span>}</span>}
+                  {m.type==="ctp" && <span>📍 CTP: {m.winPlayer?<b>{playerById[m.winPlayer]?.name}</b>:<span style={{color:"#9ca3af"}}>Pending</span>}</span>}
+                </div>
+              ))
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 
@@ -438,6 +487,7 @@ export default function App() {
   // ── ADMIN: Round Editor ────────────────────────────────────────────────────
   const RoundEditor = ({round, onSave, onClose}) => {
     const [r, setR] = useState(JSON.parse(JSON.stringify(round)));
+    const [localInfo, setLocalInfo] = useState({ course: roundInfo[round.number]?.course||"TBD", ctpHole: roundInfo[round.number]?.ctpHole||"" });
     const sched = SCHEDULE.find(x=>x.number===round.number);
     const updMatch = (i,f,v) => { const ms=[...(r.matches||[])]; ms[i]={...ms[i],[f]:v}; setR({...r,matches:ms}); };
 
@@ -459,16 +509,37 @@ export default function App() {
     const pOpts = data.players.map(p=><option key={p.id} value={p.id}>{p.name} ({teamById[p.teamId]?.name})</option>);
     const tOpts = data.teams.map(t=><option key={t.id} value={t.id}>{t.name}</option>);
 
+    const handleSave = (completed) => {
+      const newRoundInfo = { ...roundInfo, [round.number]: localInfo };
+      const exists = data.rounds.find(x=>x.number===r.number);
+      const rounds = exists ? data.rounds.map(x=>x.number===r.number?{...r,completed}:x) : [...data.rounds,{...r,completed}];
+      persist({ ...data, rounds, roundInfo: newRoundInfo });
+      onClose();
+    };
+
     return (
       <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.5)",zIndex:100,overflowY:"auto",display:"flex",justifyContent:"center",padding:"16px 8px"}}>
         <div style={{background:"#fff",borderRadius:14,padding:18,width:"100%",maxWidth:540,alignSelf:"flex-start"}}>
           <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}}>
-            <div style={{fontWeight:700,fontSize:16}}>Enter Results — Round {r.number}</div>
+            <div style={{fontWeight:700,fontSize:16}}>Round {r.number} — Info & Results</div>
             <button style={s.btn("secondary")} onClick={onClose}>✕</button>
           </div>
-          <div style={{...s.row,marginBottom:12}}>
-            <label style={{fontSize:13,width:40}}>Date</label>
-            <input type="date" style={s.inp} value={r.date||""} onChange={e=>setR({...r,date:e.target.value})} />
+
+          {/* Course / Date / CTP hole */}
+          <div style={{background:"#f9fafb",borderRadius:10,padding:12,marginBottom:14}}>
+            <div style={{fontWeight:600,fontSize:13,marginBottom:10}}>📋 Round Details</div>
+            <div style={{...s.row,marginBottom:8}}>
+              <label style={{fontSize:12,color:"#6b7280",width:70,flexShrink:0}}>Course</label>
+              <input style={s.inp} placeholder="Course name" value={localInfo.course} onChange={e=>setLocalInfo({...localInfo,course:e.target.value})} />
+            </div>
+            <div style={{...s.row,marginBottom:8}}>
+              <label style={{fontSize:12,color:"#6b7280",width:70,flexShrink:0}}>Date</label>
+              <input type="date" style={s.inp} value={r.date||""} onChange={e=>setR({...r,date:e.target.value})} />
+            </div>
+            <div style={s.row}>
+              <label style={{fontSize:12,color:"#6b7280",width:70,flexShrink:0}}>CTP hole</label>
+              <input type="number" min="1" max="18" style={{...s.inp,width:80}} placeholder="e.g. 7" value={localInfo.ctpHole} onChange={e=>setLocalInfo({...localInfo,ctpHole:e.target.value})} />
+            </div>
           </div>
 
           {r.type==="scramble5" ? (
@@ -513,8 +584,8 @@ export default function App() {
             ))
           )}
           <div style={{...s.row,justifyContent:"flex-end",gap:8,marginTop:12}}>
-            <button style={s.btn("secondary")} onClick={()=>onSave(r)}>Save Draft</button>
-            <button style={s.btn("primary")} onClick={()=>onSave({...r,completed:true})}>✓ Mark Complete</button>
+            <button style={s.btn("secondary")} onClick={()=>handleSave(false)}>Save Draft</button>
+            <button style={s.btn("primary")} onClick={()=>handleSave(true)}>✓ Mark Complete</button>
           </div>
         </div>
       </div>
@@ -524,12 +595,6 @@ export default function App() {
   // ── ADMIN ──────────────────────────────────────────────────────────────────
   const AdminView = () => {
     const getRound = num => data.rounds.find(r=>r.number===num);
-    const upsertRound = updated => {
-      const exists = data.rounds.find(r=>r.number===updated.number);
-      const rounds = exists ? data.rounds.map(r=>r.number===updated.number?updated:r) : [...data.rounds,updated];
-      persist({...data,rounds});
-      setActiveRound(null);
-    };
     const openRound = num => {
       const sched = SCHEDULE.find(s=>s.number===num);
       const existing = getRound(num);
@@ -538,7 +603,7 @@ export default function App() {
 
     return (
       <div>
-        {activeRound && <RoundEditor round={activeRound} onSave={upsertRound} onClose={()=>setActiveRound(null)} />}
+        {activeRound && <RoundEditor round={activeRound} onSave={()=>{}} onClose={()=>setActiveRound(null)} />}
         {hcpEdit ? <HandicapEditor /> : (
           <div style={s.card}>
             <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}}>
@@ -561,12 +626,14 @@ export default function App() {
           <div style={s.sec}>📋 Enter Round Results</div>
           {SCHEDULE.map(sched=>{
             const rd = getRound(sched.number);
+            const info = roundInfo[sched.number]||{};
             return (
               <div key={sched.number} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"10px 0",borderBottom:"1px solid #f3f4f6"}}>
                 <div>
                   <span style={{fontWeight:600,fontSize:14}}>Round {sched.number}</span>
                   <span style={{...s.pill("#6b7280"),marginLeft:8}}>{sched.type==="scramble5"?"Scramble":"Standard"}</span>
                   {rd?.completed && <span style={{...s.pill("#16a34a"),marginLeft:6}}>✓ Done</span>}
+                  {info.course && info.course!=="TBD" && <span style={{fontSize:12,color:"#9ca3af",marginLeft:8}}>{info.course}</span>}
                   {rd?.date && <span style={{fontSize:12,color:"#9ca3af",marginLeft:8}}>{rd.date}</span>}
                 </div>
                 <button style={{...s.btn(rd?.completed?"secondary":"primary"),padding:"6px 12px"}} onClick={()=>openRound(sched.number)}>
@@ -585,7 +652,7 @@ export default function App() {
     {id:"standings", label:"🏆 Standings"},
     {id:"schedule",  label:"📅 Schedule"},
     {id:"rounds",    label:"📋 Results"},
-    ...(isAdmin ? [{id:"admin",label:"⚙️ Admin"}] : [{id:"login",label:"🔐 Admin"}]),
+    ...(isAdmin?[{id:"admin",label:"⚙️ Admin"}]:[{id:"login",label:"🔐 Admin"}]),
   ];
 
   return (
@@ -604,12 +671,11 @@ export default function App() {
           <div style={s.card}>
             <div style={s.sec}>Admin Login</div>
             <div style={{...s.row,marginBottom:8}}>
-              <input style={s.inp} type="password" placeholder="PIN" value={pinInput} onChange={e=>setPinInput(e.target.value)}
+              <input style={s.inp} type="password" placeholder="Enter PIN" value={pinInput} onChange={e=>setPinInput(e.target.value)}
                 onKeyDown={e=>{if(e.key==="Enter"){if(pinInput===ADMIN_PIN){setIsAdmin(true);setPinError(false);setView("admin");}else setPinError(true);}}} />
               <button style={s.btn("primary")} onClick={()=>{if(pinInput===ADMIN_PIN){setIsAdmin(true);setPinError(false);setView("admin");}else setPinError(true);}}>Login</button>
             </div>
             {pinError && <div style={{color:"#dc2626",fontSize:13}}>Incorrect PIN</div>}
-            <div style={{fontSize:12,color:"#9ca3af",marginTop:6}}>Default PIN: 1234</div>
           </div>
         )}
       </div>
