@@ -15,11 +15,19 @@ async function loadData() {
 }
 async function saveData(d) {
   try {
-    await fetch(`${SUPABASE_URL}/rest/v1/league_data?id=eq.main`, {
-      method:"PATCH", headers:SB_HEADERS,
-      body:JSON.stringify({ data:d, updated_at:new Date().toISOString() })
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/league_data`, {
+      method:"POST",
+      headers:{
+        ...SB_HEADERS,
+        "Prefer":"resolution=merge-duplicates",
+      },
+      body:JSON.stringify({ id:"main", data:d, updated_at:new Date().toISOString() })
     });
-  } catch(e) { console.error(e); }
+    if (!res.ok) {
+      const err = await res.text();
+      console.error("Supabase save failed:", res.status, err);
+    }
+  } catch(e) { console.error("Save error:", e); }
 }
 
 const DEFAULT_TEAMS = [
@@ -90,7 +98,10 @@ function strokeLabel(rawDiff) {
   const { doubled, singles, half } = strokeBreakdown(rawDiff);
   const parts = [];
   if (doubled > 0) parts.push(`2 strokes on ${doubled} hardest hole${doubled!==1?"s":""}`);
-  if (singles > 0) parts.push(`1 stroke on ${singles} next hole${singles!==1?"s":""}`);
+  if (singles > 0) {
+    const descriptor = doubled > 0 ? "next hardest" : "hardest";
+    parts.push(`1 stroke on ${singles} ${descriptor} hole${singles!==1?"s":""}`);
+  }
   if (half > 0) parts.push(`½ stroke on 1 more hole`);
   return parts.join(", ");
 }
@@ -135,10 +146,12 @@ function computeStandings(teams, players, rounds) {
       (round.matches||[]).forEach(m => {
         const addPts = (pid, pts) => {
           if (!pid) return;
-          // check if pid is a sub
-          const sub = (round.subs||[]).find(s=>s.subId===pid);
-          if (sub) { subPts[pid] = (subPts[pid]||0)+pts; teamPts[sub.teamId]=(teamPts[sub.teamId]||0); /* team pts added via match */ }
-          else playerPts[pid]=(playerPts[pid]||0)+pts;
+          const isSub = (round.subs||[]).some(s=>s.subId===pid);
+          if (isSub) {
+            subPts[pid] = (subPts[pid]||0) + pts;
+          } else {
+            playerPts[pid] = (playerPts[pid]||0) + pts;
+          }
         };
         if (m.type==="front9") {
           if (m.result==="win") {
@@ -315,7 +328,7 @@ export default function App() {
         </div>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",background:"#f9fafb",borderRadius:10,padding:"12px 14px",marginBottom:14}}>
           <div>
-            <div style={{fontWeight:700,fontSize:15}}>Round {selRound}{sched.type==="scramble5"?" — Scramble":""}}</div>
+            <div style={{fontWeight:700,fontSize:15}}>Round {selRound}{sched.type==="scramble5"?" — Scramble":""}</div>
             <div style={{fontSize:13,color:"#6b7280",marginTop:2}}>📍 {info.course||"TBD"}</div>
           </div>
           <div style={{textAlign:"right"}}>
