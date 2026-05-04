@@ -268,25 +268,8 @@ export default function App() {
 
   // ── STANDINGS ──────────────────────────────────────────────────────────────
   const StandingsView = () => {
-    const r2 = data.rounds.find(r=>r.number===2);
-    const r2front = r2?.matches?.filter(m=>m.type==="front9")||[];
     return (
     <div>
-      {/* TEMP DEBUG */}
-      <div style={{background:"#fef9c3",borderRadius:8,padding:12,marginBottom:12,fontSize:11,fontFamily:"monospace",overflowX:"auto"}}>
-        <b>R2 front9 matches:</b><br/>
-        {r2front.map((m,i)=>(
-          <div key={i} style={{marginBottom:6}}>
-            Match {i+1}: team1={m.team1} team2={m.team2} winTeam={m.winTeam} result={m.result}<br/>
-            t1Players={JSON.stringify(m.team1Players)}<br/>
-            t2Players={JSON.stringify(m.team2Players)}<br/>
-            winPlayers={JSON.stringify(m.winPlayers)}<br/>
-            registeredT1={JSON.stringify((m.team1Players||[]).map(pid=>{const p=data.players.find(pl=>pl.id===pid);return p?`${p.name}(${p.teamId})`:pid}))}<br/>
-            registeredT2={JSON.stringify((m.team2Players||[]).map(pid=>{const p=data.players.find(pl=>pl.id===pid);return p?`${p.name}(${p.teamId})`:pid}))}
-          </div>
-        ))}
-        <b>MVP pts:</b> {JSON.stringify(Object.fromEntries(data.players.map(p=>[p.name,(playerPts[p.id]||0).toFixed(1)])))}
-      </div>
       <div style={s.card}>
         <div style={s.sec}>🏆 Team Standings</div>
         {sortedTeams.map((t,i) => (
