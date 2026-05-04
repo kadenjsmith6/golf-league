@@ -83,27 +83,16 @@ const DEFAULT_SCHEDULE = [
 const ROUND_INFO_DEFAULTS = Object.fromEntries([1,2,3,4,5,6].map(n=>[n,{course:"TBD",ctpHole:""}]));
 const FORMATS = ["Scramble","Best Ball","Alt Shot","Match Play"];
 
-// Stroke helpers — supports half strokes and 9.5+ (double strokes)
 function strokeBreakdown(rawDiff) {
-  // rawDiff is already divided by 2 for 9 holes
-  const doubled = Math.floor(rawDiff / 9); // holes getting 2 strokes (when diff >= 9)
-  const remainder = rawDiff - doubled * 9;  // remaining after double-stroke holes
-  const singles = Math.floor(remainder);
-  const half = (remainder - singles) >= 0.5 ? 1 : 0;
-  return { doubled, singles, half };
+  const full = Math.floor(rawDiff);
+  const half = (rawDiff - full) >= 0.5 ? 0.5 : 0;
+  return { total: full + half };
 }
 
 function strokeLabel(rawDiff) {
   if (rawDiff <= 0) return null;
-  const { doubled, singles, half } = strokeBreakdown(rawDiff);
-  const parts = [];
-  if (doubled > 0) parts.push(`2 strokes on ${doubled} hardest hole${doubled!==1?"s":""}`);
-  if (singles > 0) {
-    const descriptor = doubled > 0 ? "next hardest" : "hardest";
-    parts.push(`1 stroke on ${singles} ${descriptor} hole${singles!==1?"s":""}`);
-  }
-  if (half > 0) parts.push(`½ stroke on 1 more hole`);
-  return parts.join(", ");
+  const { total } = strokeBreakdown(rawDiff);
+  return `${total} stroke${total !== 1 ? "s" : ""}`;
 }
 
 function back9RawDiff(h1, h2) { return Math.abs(h1 - h2) / 2; }
@@ -388,7 +377,6 @@ export default function App() {
                     </div>
                     {lbl&&<div style={s.hcpTag}>{higher.name} gets {lbl}</div>}
                     {!lbl&&<div style={{fontSize:11,color:"#9ca3af",marginTop:4}}>Even — no strokes</div>}
-                    {lbl&&lbl.includes("½")&&<div style={{fontSize:11,color:"#6b7280",marginTop:4}}>½ stroke: tied after strokes = {higher.name} wins hole; opponent must win by 2 raw strokes to take it.</div>}
                   </div>
                 );
               })}
