@@ -449,7 +449,11 @@ export default function App() {
       if((r.matches||[]).length===0 && sched && sched.type!=="scramble5"){
         const matches=[];
         sched.foursomes.forEach(fg=>{
-          matches.push({type:"front9",format:"Scramble",team1:fg.teamA,team2:fg.teamB,team1Players:fg.front.slice(0,2),team2Players:fg.front.slice(2,4),result:"",winTeam:"",winPlayers:[]});
+          // Sort front players into correct team buckets by their actual teamId
+          const allFront = fg.front.map(id=>playerById[id]).filter(Boolean);
+          const t1players = allFront.filter(p=>p.teamId===fg.teamA).map(p=>p.id);
+          const t2players = allFront.filter(p=>p.teamId===fg.teamB).map(p=>p.id);
+          matches.push({type:"front9",format:"Scramble",team1:fg.teamA,team2:fg.teamB,team1Players:t1players,team2Players:t2players,result:"",winTeam:"",winPlayers:[]});
           fg.back.forEach(([p1,p2])=>{
             const pp1=playerById[p1],pp2=playerById[p2];
             matches.push({type:"back9",player1:p1,player2:p2,team1:pp1?.teamId||"",team2:pp2?.teamId||"",result:"",winPlayer:"",winTeam:""});
