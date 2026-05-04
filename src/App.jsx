@@ -613,16 +613,16 @@ export default function App() {
                 <div style={{fontWeight:600,fontSize:13,marginBottom:8}}>🏌️ Front 9: <span style={{color:teamById[m.team1]?.color}}>{teamById[m.team1]?.name}</span> vs <span style={{color:teamById[m.team2]?.color}}>{teamById[m.team2]?.name}</span></div>
                 <div style={{...s.row,marginBottom:6}}><label style={{fontSize:12,width:55}}>Format</label><select style={s.inp} value={m.format||"Scramble"} onChange={e=>updMatch(i,"format",e.target.value)}>{FORMATS.map(f=><option key={f}>{f}</option>)}</select></div>
                 <div style={{...s.row,marginBottom:6}}><label style={{fontSize:12,width:55}}>Result</label><select style={s.inp} value={m.result||""} onChange={e=>updMatch(i,"result",e.target.value)}><option value="">Pending</option><option value="win">Win</option><option value="halve">Halve</option></select></div>
-                {m.result==="win"&&<div style={s.row}><label style={{fontSize:12,width:55}}>Winner</label><select style={s.inp} value={m.winTeam||""} onChange={e=>{const side=e.target.value===m.team1?"team1Players":"team2Players";updMatch(i,"winTeam",e.target.value);updMatch(i,"winPlayers",m[side]||[]);}}><option value="">Select</option>{tOpts}</select></div>}
+                {m.result==="win"&&<div style={s.row}><label style={{fontSize:12,width:55}}>Winner</label><select style={s.inp} value={m.winTeam||""} onChange={e=>{const tid=e.target.value; const side=tid===m.team1?"team1Players":"team2Players"; const ms=[...(r.matches||[])]; ms[i]={...ms[i],winTeam:tid,winPlayers:ms[i][side]||[]}; setR({...r,matches:ms});}}><option value="">Select</option>{tOpts}</select></div>}
               </>}
               {m.type==="back9"&&<>
                 <div style={{fontWeight:600,fontSize:13,marginBottom:8}}>🎯 Back 9: <b>{resolvePlayer(m.player1,subs)?.name||"?"}</b> vs <b>{resolvePlayer(m.player2,subs)?.name||"?"}</b></div>
                 <div style={{...s.row,marginBottom:6}}><label style={{fontSize:12,width:55}}>Result</label><select style={s.inp} value={m.result||""} onChange={e=>updMatch(i,"result",e.target.value)}><option value="">Pending</option><option value="win">Win</option><option value="halve">Halve</option></select></div>
-                {m.result==="win"&&<div style={s.row}><label style={{fontSize:12,width:55}}>Winner</label><select style={s.inp} value={m.winPlayer||""} onChange={e=>{const p=resolvePlayer(e.target.value,subs)||playerById[e.target.value];updMatch(i,"winPlayer",e.target.value);if(p)updMatch(i,"winTeam",p.teamId);}}><option value="">Select</option>{pOpts}</select></div>}
+                {m.result==="win"&&<div style={s.row}><label style={{fontSize:12,width:55}}>Winner</label><select style={s.inp} value={m.winPlayer||""} onChange={e=>{const pid=e.target.value; const p=resolvePlayer(pid,subs)||playerById[pid]; const ms=[...(r.matches||[])]; ms[i]={...ms[i],winPlayer:pid,winTeam:p?.teamId||""}; setR({...r,matches:ms});}}><option value="">Select</option>{pOpts}</select></div>}
               </>}
               {m.type==="ctp"&&<>
                 <div style={{fontWeight:600,fontSize:13,marginBottom:8}}>📍 Closest to Pin</div>
-                <div style={s.row}><label style={{fontSize:12,width:55}}>Winner</label><select style={s.inp} value={m.winPlayer||""} onChange={e=>{const p=resolvePlayer(e.target.value,subs)||playerById[e.target.value];updMatch(i,"winPlayer",e.target.value);if(p)updMatch(i,"winTeam",p.teamId);}}><option value="">Select player</option>{pOpts}</select></div>
+                <div style={s.row}><label style={{fontSize:12,width:55}}>Winner</label><select style={s.inp} value={m.winPlayer||""} onChange={e=>{const pid=e.target.value; const p=resolvePlayer(pid,subs)||playerById[pid]; const ms=[...(r.matches||[])]; ms[i]={...ms[i],winPlayer:pid,winTeam:p?.teamId||""}; setR({...r,matches:ms});}}><option value="">Select player</option>{pOpts}</select></div>
               </>}
             </div>
           ))}
