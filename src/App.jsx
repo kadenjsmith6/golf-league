@@ -240,16 +240,9 @@ export default function App() {
   const sortedTeams = [...data.teams].sort((a,b)=>(teamPts[b.id]||0)-(teamPts[a.id]||0));
 
   // Build MVP list: regular players + subs (subs aggregated across all rounds)
-  const allSubs = {};
-  data.rounds.forEach(round => {
-    (round.subs||[]).forEach(s => {
-      if (!allSubs[s.subId]) allSubs[s.subId] = { name:s.name, teamId:s.teamId, isGlobal:false };
-    });
-  });
-  const mvpList = [
-    ...data.players.map(p=>({ id:p.id, name:p.name, teamId:p.teamId, pts:playerPts[p.id]||0 })),
-    ...Object.entries(allSubs).map(([id,s])=>({ id, name:s.name, teamId:s.teamId, pts:subPts[id]||0, isSub:true }))
-  ].sort((a,b)=>b.pts-a.pts);
+  const mvpList = data.players
+    .map(p=>({ id:p.id, name:p.name, teamId:p.teamId, pts:playerPts[p.id]||0 }))
+    .sort((a,b)=>b.pts-a.pts);
 
   // Resolve player — could be sub
   const resolvePlayer = (pid, roundSubs) => {
@@ -294,7 +287,7 @@ export default function App() {
             <div key={p.id} style={{display:"flex",alignItems:"center",gap:10,padding:"8px 0",borderBottom:i<mvpList.length-1?"1px solid #f3f4f6":""}}>
               <div style={{width:22,textAlign:"center",fontWeight:700,color:"#9ca3af",fontSize:12}}>#{i+1}</div>
               <div style={{flex:1}}>
-                <div style={{fontWeight:600,fontSize:14}}>{p.name}{p.isSub&&<span style={{fontSize:10,color:"#9ca3af",marginLeft:4}}>(sub)</span>}</div>
+                <div style={{fontWeight:600,fontSize:14}}>{p.name}</div>
                 {team && <span style={s.pill(team.color)}>{team.name}</span>}
               </div>
               <div style={{fontWeight:700,fontSize:16,color:team?.color||"#111"}}>{(p.pts||0).toFixed(1)}<span style={{fontSize:10,color:"#9ca3af",fontWeight:400}}> pts</span></div>
