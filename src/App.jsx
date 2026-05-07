@@ -13,21 +13,26 @@ async function loadData() {
     return null;
   } catch(e) { console.error(e); return null; }
 }
-async function saveData(d) {
+async function saveData(d, setSaveStatus) {
+  if (setSaveStatus) setSaveStatus("saving");
   try {
     const res = await fetch(`${SUPABASE_URL}/rest/v1/league_data`, {
       method:"POST",
-      headers:{
-        ...SB_HEADERS,
-        "Prefer":"resolution=merge-duplicates",
-      },
+      headers:{ ...SB_HEADERS, "Prefer":"resolution=merge-duplicates" },
       body:JSON.stringify({ id:"main", data:d, updated_at:new Date().toISOString() })
     });
     if (!res.ok) {
       const err = await res.text();
       console.error("Supabase save failed:", res.status, err);
+      if (setSaveStatus) setSaveStatus("error");
+    } else {
+      if (setSaveStatus) setSaveStatus("saved");
+      setTimeout(()=>{ if(setSaveStatus) setSaveStatus(null); }, 3000);
     }
-  } catch(e) { console.error("Save error:", e); }
+  } catch(e) {
+    console.error("Save error:", e);
+    if (setSaveStatus) setSaveStatus("error");
+  }
 }
 
 const DEFAULT_TEAMS = [
@@ -204,7 +209,8 @@ export default function App() {
     });
   }, []);
 
-  const persist = nd => { setData(nd); saveData(nd); };
+  const [saveStatus, setSaveStatus] = useState(null);
+  const persist = nd => { setData(nd); saveData(nd, setSaveStatus); };
 
   if (loading) return (
     <div style={{display:"flex",alignItems:"center",justifyContent:"center",height:"100vh",fontFamily:"sans-serif",color:"#6b7280",flexDirection:"column",gap:12}}>
@@ -727,8 +733,21 @@ export default function App() {
   return (
     <div style={s.wrap}>
       <div style={s.hdr}>
-        <div style={{fontSize:22,fontWeight:700,margin:0}}>⛳ Golf League</div>
-        <div style={{fontSize:12,opacity:0.75,marginTop:2}}>{data.rounds.filter(r=>r.completed).length}/6 rounds complete</div>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
+          <div>
+            <div style={{fontSize:22,fontWeight:700,margin:0}}>⛳ Golf League</div>
+            <div style={{fontSize:12,opacity:0.75,marginTop:2}}>{data.rounds.filter(r=>r.completed).length}/6 rounds complete</div>
+          </div>
+          {saveStatus && (
+            <div style={{
+              fontSize:12, padding:"4px 10px", borderRadius:20, marginTop:4,
+              background: saveStatus==="saved"?"#16a34a": saveStatus==="error"?"#dc2626":"rgba(255,255,255,0.3)",
+              color:"#fff", fontWeight:600
+            }}>
+              {saveStatus==="saving"?"Saving...": saveStatus==="saved"?"✓ Saved":"✕ Save failed — retry"}
+            </div>
+          )}
+        </div>
         <div style={s.tabs}>{tabs.map(t=><button key={t.id} style={s.tab(view===t.id)} onClick={()=>setView(t.id)}>{t.label}</button>)}</div>
       </div>
       <div style={s.body}>
