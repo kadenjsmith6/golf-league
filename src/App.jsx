@@ -5,7 +5,7 @@ const ADMIN_PIN = "7888";
 // ---- GitHub storage ----
 const GITHUB_TOKEN = import.meta.env.VITE_GITHUB_TOKEN;
 const GITHUB_REPO  = "kadenjsmith6/golf-league";
-const GITHUB_FILE  = "data.json";
+const GITHUB_FILE  = "data.json"; // v2
 const GITHUB_API   = `https://api.github.com/repos/${GITHUB_REPO}/contents/${GITHUB_FILE}`;
 const GITHUB_HEADERS = {
   "Authorization": `token ${GITHUB_TOKEN}`,
