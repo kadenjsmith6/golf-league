@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 const ADMIN_PIN = "7888";
 
 // ---- GitHub storage ----
-const GITHUB_TOKEN = "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";
+const GITHUB_TOKEN = "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";
 const GITHUB_REPO  = "kadenjsmith6/golf-league";
 const GITHUB_FILE  = "data.json";
 const GITHUB_API   = `https://api.github.com/repos/${GITHUB_REPO}/contents/${GITHUB_FILE}`;
