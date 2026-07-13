@@ -5,7 +5,7 @@ const ADMIN_PIN = "7888";
 // ---- GitHub storage ----
 const GITHUB_TOKEN = import.meta.env.VITE_GITHUB_TOKEN;
 const GITHUB_REPO  = "kadenjsmith6/golf-league";
-const GITHUB_FILE  = "data.json"; // v3
+const GITHUB_FILE  = "data.json"; // v4
 const GITHUB_API   = `https://api.github.com/repos/${GITHUB_REPO}/contents/${GITHUB_FILE}`;
 const GITHUB_HEADERS = {
   "Authorization": `token ${GITHUB_TOKEN}`,
@@ -111,7 +111,7 @@ const DEFAULT_SCHEDULE = [
 ];
 
 const ROUND_INFO_DEFAULTS = Object.fromEntries([1,2,3,4,5,6].map(n=>[n,{course:"TBD",ctpHole:""}]));
-const FORMATS = ["Scramble","Best Ball","Shamble","Alt Shot","Match Play"];
+const FORMATS = ["Scramble","Best Ball","Shamble","Alt Shot","Combined Stroke","Match Play"];
 
 // ---- Handicap helpers ----
 function strokeBreakdown(raw) {
@@ -140,8 +140,11 @@ function front9Info(format, t1p, t2p) {
     const minH = Math.min(...h1,...h2);
     return { mode:"bestball", players:[...t1p,...t2p].map(p=>({ name:p.name, raw:(p.handicap-minH)*0.75*0.5 })) };
   }
-  const s1=h1.reduce((a,b)=>a+b,0), s2=h2.reduce((a,b)=>a+b,0);
-  return { lower: s1<=s2?"team1":"team2", raw: Math.abs(s1-s2)/2 };
+  if (format === "Alt Shot" || format === "Match Play" || format === "Combined Stroke") {
+    // Combined Stroke: both teammates' full handicaps added, halved for 9 holes, straight up
+    const s1=h1.reduce((a,b)=>a+b,0), s2=h2.reduce((a,b)=>a+b,0);
+    return { lower: s1<=s2?"team1":"team2", raw: Math.abs(s1-s2)/2 };
+  }
 }
 
 // ---- Standings ----
@@ -343,7 +346,7 @@ export default function App() {
                 <div style={{fontWeight:600,fontSize:14}}>{p.name}</div>
                 {team&&<span style={s.pill(team.color)}>{team.name}</span>}
               </div>
-              <div style={{fontWeight:700,fontSize:16,color:team?.color||"#111"}}>{(p.pts||0).toFixed(1)}<span style={{fontSize:10,color:"#9ca3af",fontWeight:400}}> pts</span></div>
+              <div style={{fontWeight:700,fontSize:16,color:team?.color||"#111"}}>{(p.pts||0).toFixed(2)}<span style={{fontSize:10,color:"#9ca3af",fontWeight:400}}> pts</span></div>
             </div>
           );
         })}
